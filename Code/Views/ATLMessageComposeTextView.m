@@ -1,4 +1,4 @@
- //
+//
 //  UIMessageComposeTextView.m
 //  Atlas
 //
@@ -38,19 +38,19 @@ static NSString *const ATLPlaceholderText = @"Enter Message";
     if (self) {
         
         self.attributedText = [[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:17],
-                                                                                         NSForegroundColorAttributeName : ATLGrayColor()}];
-        self.textContainerInset = UIEdgeInsetsMake(4, 4, 4, 4);
+                                                                                          NSForegroundColorAttributeName : ATLGrayColor()}];
+        self.textContainerInset = UIEdgeInsetsMake(10, 4, 4, 4);
         self.font = [UIFont systemFontOfSize:17];
         self.dataDetectorTypes = UIDataDetectorTypeLink;
         self.placeholder = ATLPlaceholderText;
-
+        
         self.placeholderLabel = [UILabel new];
         self.placeholderLabel.font = self.font;
         self.placeholderLabel.text = ATLLocalizedString(self.placeholder, self.placeholder, nil);;
         self.placeholderLabel.textColor = [UIColor lightGrayColor];
         self.placeholderLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [self addSubview:self.placeholderLabel];
-
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewTextDidChange:) name:UITextViewTextDidChangeNotification object:self];
     }
     return self;
@@ -64,21 +64,22 @@ static NSString *const ATLPlaceholderText = @"Enter Message";
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-
+    
     if (!self.placeholderLabel.isHidden) {
         // Position the placeholder label over where entered text would be displayed.
         CGRect placeholderFrame = self.placeholderLabel.frame;
         CGFloat textViewHorizontalIndent = 5;
         placeholderFrame.origin.x = self.textContainerInset.left + textViewHorizontalIndent;
-        placeholderFrame.origin.y = self.textContainerInset.top;
         CGSize fittedPlaceholderSize = [self.placeholderLabel sizeThatFits:CGSizeMake(MAXFLOAT, MAXFLOAT)];
         placeholderFrame.size = fittedPlaceholderSize;
         CGFloat maxPlaceholderWidth = CGRectGetWidth(self.frame) - self.textContainerInset.left - self.textContainerInset.right - textViewHorizontalIndent * 2;
         if (fittedPlaceholderSize.width > maxPlaceholderWidth) {
             placeholderFrame.size.width = maxPlaceholderWidth;
         }
+        //        placeholderFrame.origin.y = self.textContainerInset.top;
+        placeholderFrame.origin.y = self.frame.size.height/2 - placeholderFrame.size.height/2;
         self.placeholderLabel.frame = placeholderFrame;
-
+        
         // We want the placeholder to be overlapped by / underneath the cursor.
         [self sendSubviewToBack:self.placeholderLabel];
     }

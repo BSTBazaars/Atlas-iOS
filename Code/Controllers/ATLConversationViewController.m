@@ -32,7 +32,7 @@
 #import "ATLLocationManager.h"
 @import AVFoundation;
 
-@interface ATLConversationViewController () <UICollectionViewDataSource, UICollectionViewDelegate, ATLMessageInputToolbarDelegate, UIActionSheetDelegate, CLLocationManagerDelegate>
+@interface ATLConversationViewController () <ATLMessageInputToolbarDelegate, UIActionSheetDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic) ATLConversationDataSource *conversationDataSource;
 @property (nonatomic, readwrite) LYRQueryController *queryController;

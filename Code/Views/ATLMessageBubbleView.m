@@ -169,7 +169,7 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
 
 - (void)updateWithLocation:(CLLocationCoordinate2D)location
 {
-    self.imageWidthConstraint.constant = ATLMaxCellWidth();
+    self.imageWidthConstraint.constant = ATLMessageBubbleMapWidth;
     [self applyImageWidthConstraint:YES];
     [self setBubbleViewContentType:ATLBubbleViewContentTypeLocation];
     [self setNeedsUpdateConstraints];
@@ -304,6 +304,11 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)setBackgroundColor:(UIColor *)backgroundColor
+{
+    [super setBackgroundColor:backgroundColor];
+}
+
 - (BOOL)canBecomeFirstResponder
 {
     return YES;
@@ -428,8 +433,7 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
     return NO;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     if (gestureRecognizer == self.panGestureRecognizer || otherGestureRecognizer == self.panGestureRecognizer) {
         return YES;
     }

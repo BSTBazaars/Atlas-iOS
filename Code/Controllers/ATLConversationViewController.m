@@ -1211,6 +1211,9 @@ static NSInteger const ATLPhotoActionSheet = 1000;
             for (ATLDataSourceChange *change in objectChanges) {
                 switch (change.type) {
                     case LYRQueryControllerChangeTypeInsert:
+                        if (change.newIndex > 1) {
+                            [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:change.newIndex - 1]];
+                        }
                         [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:change.newIndex]];
                         break;
                         

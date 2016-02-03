@@ -43,13 +43,13 @@
  */
 @property (nonatomic) ATLMessageInputToolbar *messageInputToolbar;
 
-/** 
+/**
  @abstract An `ATLTypingIndicatorViewController` displayed to represent participants typing in a conversation.
  */
 @property (nonatomic) ATLTypingIndicatorViewController *typingIndicatorController;
 
 /**
- @abstract The `UICollectionView` responsible for displaying messaging content. 
+ @abstract The `UICollectionView` responsible for displaying messaging content.
  @discussion Subclasses should set the collection view property in their `loadView` method. The controller will then handle configuring autolayout constraints for the collection view.
  */
 @property (nonatomic) UICollectionView *collectionView;
@@ -84,8 +84,8 @@
 - (BOOL)shouldScrollToBottom;
 
 /**
- @abstract Informs the controller that it should scroll the collection view to the bottom of its content. 
- @param animated A boolean value to determine whether or not the scroll should be animated. 
+ @abstract Informs the controller that it should scroll the collection view to the bottom of its content.
+ @param animated A boolean value to determine whether or not the scroll should be animated.
  */
 - (void)scrollToBottomAnimated:(BOOL)animated;
 

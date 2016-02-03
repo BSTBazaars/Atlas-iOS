@@ -32,7 +32,7 @@ extern NSString *const ATLMessageInputToolbarAccessibilityLabel;
 //---------------------------------
 
 /**
- @abstract The `ATLMessageInputToolbarDelegate` notifies its receiver when buttons have been 
+ @abstract The `ATLMessageInputToolbarDelegate` notifies its receiver when buttons have been
  tapped.
  */
 @protocol ATLMessageInputToolbarDelegate <NSObject>
@@ -46,6 +46,8 @@ extern NSString *const ATLMessageInputToolbarAccessibilityLabel;
  @abstract Notifies the receiver that the left accessory button was tapped.
  */
 - (void)messageInputToolbar:(ATLMessageInputToolbar *)messageInputToolbar didTapLeftAccessoryButton:(UIButton *)leftAccessoryButton;
+
+- (void)messageInputToolbar:(ATLMessageInputToolbar *)messageInputToolbar didTapGalleryAccessoryButton:(UIButton *)leftAccessoryButton;
 
 @optional
 
@@ -69,7 +71,8 @@ extern NSString *const ATLMessageInputToolbarAccessibilityLabel;
  caches any content provided and exposes that content back to a consuming object via the
  mediaAttachments property.
  */
-@interface ATLMessageInputToolbar : UIToolbar
+@interface ATLMessageInputToolbar : UIView
+
 
 //------------------------------
 // Content Display Methods
@@ -90,15 +93,20 @@ extern NSString *const ATLMessageInputToolbarAccessibilityLabel;
 //-----------------------------
 
 /**
- @abstract The left accessory button for the view. 
+ @abstract The left accessory button for the view.
  @discussion By default, the button displays a camera icon. If set to `nil` the `textInputView` will expand to the left edge of the toolbar.
  */
 @property (nonatomic) UIButton *leftAccessoryButton;
- 
+
 /**
  @abstract The right accessory button for the view.
  */
 @property (nonatomic) UIButton *rightAccessoryButton;
+
+/**
+ @abstract The right accessory button for the view.
+ */
+@property (nonatomic) UIButton *galleryAccessoryButton;
 
 /**
  @abstract The right accessory button title.
@@ -134,7 +142,7 @@ extern NSString *const ATLMessageInputToolbarAccessibilityLabel;
 @property (nonatomic) UIImage *rightAccessoryImage;
 
 /**
- @abstract Determines whether or not the right accessory button displays an icon. 
+ @abstract Determines whether or not the right accessory button displays an icon.
  @disucssion If NO, the right accessory button will display the text `SEND` at all times.
  @default YES
  */
@@ -146,9 +154,9 @@ extern NSString *const ATLMessageInputToolbarAccessibilityLabel;
 @property (nonatomic) ATLMessageComposeTextView *textInputView;
 
 /**
-  @abstract The margin on top and bottom of the textInputView.
-  @default 7.0f.
-  */
+ @abstract The margin on top and bottom of the textInputView.
+ @default 7.0f.
+ */
 @property (nonatomic) CGFloat verticalMargin;
 
 /**

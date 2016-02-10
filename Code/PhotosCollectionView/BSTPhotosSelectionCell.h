@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, CellStatus) {
 @property (nonatomic, copy) void(^actionBlock)(void);
 @property (nonatomic, assign) CellStatus cellStatus;
 
-@property (nonatomic, weak) IBOutlet MBCircularProgressBarView *progressBar;
+@property (nonatomic, strong) MBCircularProgressBarView *progressBar;
 @property (nonatomic, strong) UIImage *thumbnailImage;
 @property (nonatomic, copy) NSString *representedAssetIdentifier;
 

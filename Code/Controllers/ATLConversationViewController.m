@@ -66,6 +66,7 @@ static NSString *const ATLDefaultPushAlertLocation = @"sent you a location.";
 static NSString *const ATLDefaultPushAlertVideo = @"sent you a video.";
 static NSString *const ATLDefaultPushAlertText = @"sent you a message.";
 static NSInteger const ATLPhotoActionSheet = 1000;
+static NSInteger const childViewHeight = 130;
 
 + (NSCache *)sharedMediaAttachmentCache
 {
@@ -122,8 +123,13 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     _objectChanges = [NSMutableArray new];
     _animationQueue = dispatch_queue_create("com.atlas.animationQueue", DISPATCH_QUEUE_SERIAL);
     
-    UIStoryboard *targetStoryboad = [UIStoryboard storyboardWithName:@"BSTLayerChat" bundle:nil];
-    self.childViewController = [targetStoryboad instantiateViewControllerWithIdentifier:@"BSTPhotosSelectionViewController"];
+    UICollectionViewFlowLayout *flowLayout = [UICollectionViewFlowLayout new];
+    flowLayout.minimumLineSpacing = 10;
+    flowLayout.itemSize = CGSizeMake(115, 115);
+    flowLayout.sectionInset = UIEdgeInsetsMake(0, 10, 10, 10);
+    flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    
+    self.childViewController = [[BSTPhotosSelectionViewController alloc] initWithCollectionViewLayout:flowLayout];
     self.childViewController.delegate = self;
 }
 
@@ -136,18 +142,16 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
-    static const NSInteger childViewHeight = 130;
-    
     [self addChildViewController:self.childViewController];
     [self.childViewController didMoveToParentViewController:self];
+    [self.view addSubview:self.childViewController.view];
     
-    self.childViewController.view.backgroundColor = [UIColor redColor];
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    
     self.childViewController.view.frame = CGRectMake(0,
-                                                     screenSize.height - 64,
+                                                     screenSize.height,
                                                      screenSize.width,
                                                      childViewHeight);
-    [self.view addSubview:self.childViewController.view];
 }
 
 - (void)setLayerClient:(LYRClient *)layerClient
@@ -200,6 +204,13 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     if (self.addressBarController && !self.addressBarController.isDisabled) {
         [self.addressBarController.addressBarView.addressBarTextView becomeFirstResponder];
     }
+    
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    self.childViewController.view.frame = CGRectMake(0,
+                                                     screenSize.height,
+                                                     screenSize.width,
+                                                     childViewHeight);
+    [self.childViewController.view setNeedsLayout];
 }
 
 - (void)dealloc
@@ -591,14 +602,14 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     }
     
     [self displayImagePickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
-
-//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-//                                                             delegate:self
-//                                                    cancelButtonTitle:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.cancel.key", @"Cancel", nil)
-//                                               destructiveButtonTitle:nil
-//                                                    otherButtonTitles:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.takephoto.key", @"Take Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.lastphoto.key", @"Last Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.library.key", @"Photo/Video Library", nil), nil];
-//    [actionSheet showInView:self.view];
-//    actionSheet.tag = ATLPhotoActionSheet;
+    
+    //    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+    //                                                             delegate:self
+    //                                                    cancelButtonTitle:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.cancel.key", @"Cancel", nil)
+    //                                               destructiveButtonTitle:nil
+    //                                                    otherButtonTitles:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.takephoto.key", @"Take Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.lastphoto.key", @"Last Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.library.key", @"Photo/Video Library", nil), nil];
+    //    [actionSheet showInView:self.view];
+    //    actionSheet.tag = ATLPhotoActionSheet;
 }
 
 - (void)messageInputToolbar:(ATLMessageInputToolbar *)messageInputToolbar didTapRightAccessoryButton:(UIButton *)rightAccessoryButton
@@ -655,52 +666,52 @@ static NSInteger const ATLPhotoActionSheet = 1000;
 
 - (void)showGalleryView {
     CGSize screenSize = self.view.bounds.size;
-    static const NSInteger childViewHeight = 130;
-    
-    [self.messageInputToolbar.textInputView resignFirstResponder];
     UIEdgeInsets insets = self.collectionView.contentInset;
-    insets.bottom += childViewHeight;
+    insets.bottom = childViewHeight + 60;
     
     CGRect currentInputBarRect = self.messageInputToolbar.frame;
     
-    [UIView animateWithDuration:0.3 animations:^{
-        self.collectionView.contentInset = insets;
-        self.childViewController.view.frame = CGRectMake(0,
-                                                         screenSize.height - childViewHeight,
-                                                         screenSize.width,
-                                                         childViewHeight);
-        self.messageInputToolbar.frame = CGRectMake(currentInputBarRect.origin.x,
-                                                    currentInputBarRect.origin.y - childViewHeight,
-                                                    currentInputBarRect.size.width,
-                                                    currentInputBarRect.size.height);
-        [self scrollToBottomAnimated:YES];
-    }];
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         [self.messageInputToolbar.textInputView resignFirstResponder];
+                         
+                         self.collectionView.contentInset = insets;
+                         self.childViewController.view.frame = CGRectMake(0,
+                                                                          screenSize.height - childViewHeight,
+                                                                          screenSize.width,
+                                                                          childViewHeight);
+                         self.messageInputToolbar.frame = CGRectMake(currentInputBarRect.origin.x,
+                                                                     self.childViewController.view.frame.origin.y - 60,
+                                                                     currentInputBarRect.size.width,
+                                                                     currentInputBarRect.size.height);
+                         [self scrollToBottomAnimated:NO];
+                     } completion:^(BOOL finished) {
+                         [self.childViewController.collectionViewLayout invalidateLayout];
+                     }];
 }
 
 - (void)hideGalleryView {
     CGSize screenSize = self.view.bounds.size;
-    static const NSInteger childViewHeight = 130;
-    
     UIEdgeInsets insets = self.collectionView.contentInset;
     insets.bottom -= childViewHeight;
     
     CGRect currentInputBarRect = self.messageInputToolbar.frame;
-
+    
     [UIView animateWithDuration:0.3
                      animations:^{
-        self.collectionView.contentInset = insets;
-        self.childViewController.view.frame = CGRectMake(0,
-                                                         screenSize.height,
-                                                         screenSize.width,
-                                                         childViewHeight);
-        self.messageInputToolbar.frame = CGRectMake(currentInputBarRect.origin.x,
-                                                    currentInputBarRect.origin.y + childViewHeight,
-                                                    currentInputBarRect.size.width,
-                                                    currentInputBarRect.size.height);
-    }
+                         self.collectionView.contentInset = insets;
+                         self.childViewController.view.frame = CGRectMake(0,
+                                                                          screenSize.height,
+                                                                          screenSize.width,
+                                                                          childViewHeight);
+                         self.messageInputToolbar.frame = CGRectMake(currentInputBarRect.origin.x,
+                                                                     currentInputBarRect.origin.y + childViewHeight,
+                                                                     currentInputBarRect.size.width,
+                                                                     currentInputBarRect.size.height);
+                     }
                      completion:^(BOOL finished) {
-         [self.childViewController updateContent];
-     }];
+                         [self.childViewController updateContent];
+                     }];
 }
 
 #pragma mark - Message Sending
@@ -892,14 +903,9 @@ static NSInteger const ATLPhotoActionSheet = 1000;
                                                          screenSize.height,
                                                          screenSize.width,
                                                          viewSize.height);
+        [self.childViewController updateContent];
     }
 }
-
-- (void)theKeyboardWillHide:(NSNotification *)notification
-{
-
-}
-
 
 - (void)didReceiveTypingIndicator:(NSNotification *)notification
 {
@@ -1468,7 +1474,6 @@ static NSInteger const ATLPhotoActionSheet = 1000;
 - (void)atl_registerForNotifications
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(theKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(theKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
     // Layer Notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveTypingIndicator:) name:LYRConversationDidReceiveTypingIndicatorNotification object:nil];

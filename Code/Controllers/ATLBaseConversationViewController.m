@@ -320,7 +320,7 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     [self updateBottomCollectionViewInset];
     [self.view layoutIfNeeded];
     [UIView commitAnimations];
-    
+    //
     CGRect currentInputBarRect = self.messageInputToolbar.frame;
     
     [UIView animateWithDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]

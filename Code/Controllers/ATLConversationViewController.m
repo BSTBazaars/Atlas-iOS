@@ -599,6 +599,9 @@ static NSInteger const childViewHeight = 130;
 {
     if (messageInputToolbar.textInputView.isFirstResponder) {
         [messageInputToolbar.textInputView resignFirstResponder];
+    } else if (messageInputToolbar.galleryAccessoryButton.selected) {
+        messageInputToolbar.galleryAccessoryButton.selected = NO;
+        [self hideGalleryView];
     }
     
     [self displayImagePickerWithSourceType:UIImagePickerControllerSourceTypeCamera];

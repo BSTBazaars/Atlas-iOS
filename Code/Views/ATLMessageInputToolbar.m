@@ -165,7 +165,7 @@ static CGFloat const ATLButtonHeight = 28.0f;
                                                    additionalBtnSize,
                                                    additionalBtnSize);
     self.rightAccessoryButton.frame = CGRectMake(CGRectGetMaxX(self.textInputView.frame) + sideIndent,
-                                                 self.textInputView.frame.origin.y,
+                                                 self.textInputView.frame.size.height + self.textInputView.frame.origin.y - inputBtnHeight,
                                                  inputBtnWidth,
                                                  inputBtnHeight);
     

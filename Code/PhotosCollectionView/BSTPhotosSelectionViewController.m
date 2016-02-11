@@ -126,22 +126,23 @@ static CGSize AssetGridThumbnailSize;
              Tell the collection view to animate insertions and deletions if we
              have incremental diffs.
              */
-            [collectionView performBatchUpdates:^{
-                NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
-                if ([removedIndexes count] > 0) {
-                    [collectionView deleteItemsAtIndexPaths:[removedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                }
-                
-                NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
-                if ([insertedIndexes count] > 0) {
-                    [collectionView insertItemsAtIndexPaths:[insertedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                }
-                
-                NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
-                if ([changedIndexes count] > 0) {
-                    [collectionView reloadItemsAtIndexPaths:[changedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                }
-            } completion:NULL];
+            [collectionView reloadData];
+//            [collectionView performBatchUpdates:^{
+//                NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
+//                if ([removedIndexes count] > 0) {
+//                    [collectionView deleteItemsAtIndexPaths:[removedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+//                }
+//                
+//                NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
+//                if ([insertedIndexes count] > 0) {
+//                    [collectionView insertItemsAtIndexPaths:[insertedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+//                }
+//                
+//                NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
+//                if ([changedIndexes count] > 0) {
+//                    [collectionView reloadItemsAtIndexPaths:[changedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+//                }
+//            } completion:NULL];
         }
         
         [self resetCachedAssets];

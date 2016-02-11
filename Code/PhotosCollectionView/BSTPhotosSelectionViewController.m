@@ -34,20 +34,29 @@
 static NSString * const reuseIdentifier = @"BSTPhotosSelectionCell";
 static CGSize AssetGridThumbnailSize;
 
-
-- (void)awakeFromNib {
-    self.imageManager = [[PHCachingImageManager alloc] init];
-    [self resetCachedAssets];
+- (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout {
+    self = [super initWithCollectionViewLayout:layout];
     
-    PHFetchOptions *allPhotosOptions = [[PHFetchOptions alloc] init];
-    allPhotosOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
+    if (self) {
+        self.imageManager = [[PHCachingImageManager alloc] init];
+        [self resetCachedAssets];
+        
+        PHFetchOptions *allPhotosOptions = [[PHFetchOptions alloc] init];
+        allPhotosOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
+        
+        PHFetchResult *allPhotos = [PHAsset fetchAssetsWithOptions:allPhotosOptions];
+        
+        self.assetsFetchResults = allPhotos;
+        [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
+        
+        self.allExportSessions = [NSMutableDictionary new];
     
-    PHFetchResult *allPhotos = [PHAsset fetchAssetsWithOptions:allPhotosOptions];
+        self.collectionView.showsHorizontalScrollIndicator = NO;
+        self.collectionView.backgroundColor = [UIColor colorWithRed:247.f/255.f green:247.f/255.f blue:248.f/255.f alpha:1];
+        [self.collectionView registerClass:[BSTPhotosSelectionCell class] forCellWithReuseIdentifier:reuseIdentifier];
+    }
     
-    self.assetsFetchResults = allPhotos;
-    [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
-    
-    self.allExportSessions = [NSMutableDictionary new];
+    return self;
 }
 
 - (void)dealloc {
@@ -58,6 +67,7 @@ static CGSize AssetGridThumbnailSize;
     [super viewDidLoad];
     
     self.collectionView.allowsMultipleSelection = YES;
+    self.automaticallyAdjustsScrollViewInsets = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -267,8 +277,11 @@ static CGSize AssetGridThumbnailSize;
     self.timer = nil;
     self.allExportSessions = [NSMutableDictionary new];
     
-    [self.collectionView reloadData];
-    self.collectionView.contentOffset = CGPointMake(0, 0);
+    [UIView performWithoutAnimation:^{
+        [self.collectionView reloadData];
+        [self.collectionViewLayout invalidateLayout];
+        self.collectionView.contentOffset = CGPointMake(0, 0);
+    }];
 }
 
 #pragma mark - Asset Caching

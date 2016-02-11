@@ -605,14 +605,14 @@ static NSInteger const childViewHeight = 130;
     }
     
     [self displayImagePickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
-    
-    //    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-    //                                                             delegate:self
-    //                                                    cancelButtonTitle:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.cancel.key", @"Cancel", nil)
-    //                                               destructiveButtonTitle:nil
-    //                                                    otherButtonTitles:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.takephoto.key", @"Take Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.lastphoto.key", @"Last Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.library.key", @"Photo/Video Library", nil), nil];
-    //    [actionSheet showInView:self.view];
-    //    actionSheet.tag = ATLPhotoActionSheet;
+
+//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+//                                                             delegate:self
+//                                                    cancelButtonTitle:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.cancel.key", @"Cancel", nil)
+//                                               destructiveButtonTitle:nil
+//                                                    otherButtonTitles:ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.takephoto.key", @"Take Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.lastphoto.key", @"Last Photo/Video", nil), ATLLocalizedString(@"atl.conversation.toolbar.actionsheet.library.key", @"Photo/Video Library", nil), nil];
+//    [actionSheet showInView:self.view];
+//    actionSheet.tag = ATLPhotoActionSheet;
 }
 
 - (void)messageInputToolbar:(ATLMessageInputToolbar *)messageInputToolbar didTapRightAccessoryButton:(UIButton *)rightAccessoryButton
@@ -677,7 +677,7 @@ static NSInteger const childViewHeight = 130;
     [UIView animateWithDuration:0.3
                      animations:^{
                          [self.messageInputToolbar.textInputView resignFirstResponder];
-                         
+
                          self.collectionView.contentInset = insets;
                          self.childViewController.view.frame = CGRectMake(0,
                                                                           screenSize.height - childViewHeight,
@@ -691,7 +691,7 @@ static NSInteger const childViewHeight = 130;
                      } completion:^(BOOL finished) {
                          [self.childViewController.collectionViewLayout invalidateLayout];
                      }];
-}
+    }
 
 - (void)hideGalleryView {
     CGSize screenSize = self.view.bounds.size;
@@ -699,7 +699,7 @@ static NSInteger const childViewHeight = 130;
     insets.bottom -= childViewHeight;
     
     CGRect currentInputBarRect = self.messageInputToolbar.frame;
-    
+
     [UIView animateWithDuration:0.3
                      animations:^{
                          self.collectionView.contentInset = insets;
@@ -714,7 +714,7 @@ static NSInteger const childViewHeight = 130;
                      }
                      completion:^(BOOL finished) {
                          [self.childViewController updateContent];
-                     }];
+              }];
 }
 
 #pragma mark - Message Sending

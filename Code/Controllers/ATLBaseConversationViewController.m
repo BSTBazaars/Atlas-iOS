@@ -76,18 +76,10 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     
     // Add message input tool bar
     self.messageInputToolbar = [self initializeMessageInputToolbar];
-    self.messageInputToolbar.frame = CGRectMake(0,
-                                                self.view.bounds.size.height - 124,
-                                                self.view.bounds.size.width,
-                                                60);
-    [self.view addSubview:self.messageInputToolbar];
     
-    // Fixes an ios9 bug that causes the background of the input accessory view to be black when being presented on screen.
-    //    self.messageInputToolbar.translucent = NO;
-    // An apparent system bug causes a view controller to not be deallocated
-    // if the view controller's own inputAccessoryView property is used.
-    //    self.view.inputAccessoryView = self.messageInputToolbar;
+    [self.view addSubview:self.messageInputToolbar];
     self.messageInputToolbar.containerViewController = self;
+
     
     // Add typing indicator
     self.typingIndicatorController = [[ATLTypingIndicatorViewController alloc] init];
@@ -148,6 +140,13 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     if (self.isFirstAppearance) {
         self.firstAppearance = NO;
         // We use the content size of the actual collection view when calculating the ammount to scroll. Hence, we layout the collection view before scrolling to the bottom.
+        CGRect windowRect = [UIScreen mainScreen].bounds;
+        self.messageInputToolbar.frame = CGRectMake(0,
+                                                    windowRect.size.height == self.view.bounds.size.height ?
+                                                    self.view.bounds.size.height - 124 :
+                                                    self.view.bounds.size.height - 60,
+                                                    self.view.bounds.size.width,
+                                                    60);
         [self.view layoutIfNeeded];
         [self scrollToBottomAnimated:NO];
     }
@@ -247,10 +246,10 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    if (![self.navigationController.viewControllers containsObject:self]) {
-        return;
-    }
-    
+//    if (![self.navigationController.viewControllers containsObject:self]) {
+//        return;
+//    }
+//    
     //    if (!self.messageInputToolbar.galleryAccessoryButton.selected) {
     [self configureWithKeyboardNotification:notification];
     //    }
@@ -315,18 +314,18 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     [self.view layoutIfNeeded];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
-    //    [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]];
+//    [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]];
     [UIView setAnimationBeginsFromCurrentState:YES];
     [self updateBottomCollectionViewInset];
     [self.view layoutIfNeeded];
     [UIView commitAnimations];
-    //
+//
     CGRect currentInputBarRect = self.messageInputToolbar.frame;
     
     [UIView animateWithDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]
                      animations:^{
                          self.messageInputToolbar.frame = CGRectMake(currentInputBarRect.origin.x,
-                                                                     keyboardEndFrameInView.origin.y - 60,
+                                                                     keyboardEndFrameInView.origin.y - currentInputBarRect.size.height,
                                                                      currentInputBarRect.size.width,
                                                                      currentInputBarRect.size.height);
                      }];

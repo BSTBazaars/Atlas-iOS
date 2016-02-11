@@ -1344,28 +1344,34 @@ static NSInteger const childViewHeight = 130;
         dispatch_suspend(self.animationQueue);
         [self.collectionView performBatchUpdates:^{
             for (ATLDataSourceChange *change in objectChanges) {
-                switch (change.type) {
-                    case LYRQueryControllerChangeTypeInsert:
-                        if (change.newIndex > 1) {
-                            [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:change.newIndex - 1]];
-                        }
-                        [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:change.newIndex]];
-                        break;
-                        
-                    case LYRQueryControllerChangeTypeMove:
-                        [self.collectionView moveSection:change.currentIndex toSection:change.newIndex];
-                        break;
-                        
-                    case LYRQueryControllerChangeTypeDelete:
-                        [self.collectionView deleteSections:[NSIndexSet indexSetWithIndex:change.currentIndex]];
-                        break;
-                        
-                    case LYRQueryControllerChangeTypeUpdate:
-                        // If we call reloadSections: for a section that is already being animated due to another move (e.g. moving section 17 to 16 causes section 16 to be moved/animated to 17 and then we also reload section 16), UICollectionView will throw an exception. But since all onscreen sections will be reconfigured (see below) we don't need to reload the sections here anyway.
-                        break;
-                        
-                    default:
-                        break;
+                @try {
+                    switch (change.type) {
+                        case LYRQueryControllerChangeTypeInsert:
+                            if (change.newIndex > 1) {
+                                [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:change.newIndex - 1]];
+                            }
+                            [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:change.newIndex]];
+                            break;
+                            
+                        case LYRQueryControllerChangeTypeMove:
+                            [self.collectionView moveSection:change.currentIndex toSection:change.newIndex];
+                            break;
+                            
+                        case LYRQueryControllerChangeTypeDelete:
+                            [self.collectionView deleteSections:[NSIndexSet indexSetWithIndex:change.currentIndex]];
+                            break;
+                            
+                        case LYRQueryControllerChangeTypeUpdate:
+                            // If we call reloadSections: for a section that is already being animated due to another move (e.g. moving section 17 to 16 causes section 16 to be moved/animated to 17 and then we also reload section 16), UICollectionView will throw an exception. But since all onscreen sections will be reconfigured (see below) we don't need to reload the sections here anyway.
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                }
+                @catch (NSException *exception) {
+                    NSLog(@"error occured: %@", [exception reason]);
+                    [self.collectionView reloadData];
                 }
             }
         } completion:^(BOOL finished) {

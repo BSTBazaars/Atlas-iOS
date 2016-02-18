@@ -1342,9 +1342,9 @@ static NSInteger const childViewHeight = 130;
     // ensure the animation's queue will resume
     if (self.collectionView) {
         dispatch_suspend(self.animationQueue);
-        [self.collectionView performBatchUpdates:^{
-            for (ATLDataSourceChange *change in objectChanges) {
-                @try {
+        @try {
+            [self.collectionView performBatchUpdates:^{
+                for (ATLDataSourceChange *change in objectChanges) {
                     switch (change.type) {
                         case LYRQueryControllerChangeTypeInsert:
                             if (change.newIndex > 1) {
@@ -1369,14 +1369,15 @@ static NSInteger const childViewHeight = 130;
                             break;
                     }
                 }
-                @catch (NSException *exception) {
-                    NSLog(@"error occured: %@", [exception reason]);
-                    [self.collectionView reloadData];
-                }
-            }
-        } completion:^(BOOL finished) {
+            } completion:^(BOOL finished) {
+                dispatch_resume(self.animationQueue);
+            }];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"error occured: %@", [exception reason]);
+            [self.collectionView reloadData];
             dispatch_resume(self.animationQueue);
-        }];
+        }
     }
     [self configureCollectionViewElements];
     

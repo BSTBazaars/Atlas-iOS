@@ -48,7 +48,7 @@ NSString *const ATLConversationCollectionViewAccessibilityIdentifier = @"Convers
     self.alwaysBounceVertical = YES;
     self.bounces = YES;
     self.accessibilityIdentifier = ATLConversationCollectionViewAccessibilityIdentifier;
-    self.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
+    self.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     [self registerReuseIdentifiers];
 }
 

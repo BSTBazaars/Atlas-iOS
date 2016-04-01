@@ -312,7 +312,6 @@ static CGFloat const ATLButtonHeight = 28.0f;
 
 - (void)galleryAccessoryButtonTapped
 {
-    self.galleryAccessoryButton.selected = !self.galleryAccessoryButton.selected;
     if (self.inputToolBarDelegate &&
         [self.inputToolBarDelegate respondsToSelector:@selector(messageInputToolbar:didTapGalleryAccessoryButton:)])
     {

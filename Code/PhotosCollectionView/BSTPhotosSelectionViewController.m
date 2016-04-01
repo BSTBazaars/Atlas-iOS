@@ -178,6 +178,7 @@ static CGSize AssetGridThumbnailSize;
                                               
                                               if (asset.mediaType == PHAssetMediaTypeImage) {
                                                   [weakSelf sendImageData:[NSURL URLWithString:photosUrl]];
+                                                  [weakCell setSelected:NO];
                                               } else if (asset.mediaType == PHAssetMediaTypeVideo) {
                                                   weakCell.cellStatus = CellStatusDownloading;
                                                   [weakSelf compressVideoWithURL:[NSURL URLWithString:photosUrl] videoId:photosId atIndexPath:indexPath];
@@ -203,6 +204,7 @@ static CGSize AssetGridThumbnailSize;
         NSLog(@"session progress %f", session.progress);
     } else {
         cell.cellStatus = CellStatusRegular;
+        [weakCell setSelected:NO];
     }
     
     return cell;

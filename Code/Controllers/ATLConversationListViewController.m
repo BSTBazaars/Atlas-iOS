@@ -415,7 +415,7 @@ NSString *const ATLConversationListViewControllerDeletionModeEveryone = @"Everyo
         selectedConversation = [self.queryController objectAtIndexPath:indexPath];
     }
     self.conversationSelectedBeforeContentChange = selectedConversation;
-    [self.tableView beginUpdates];
+//    [self.tableView beginUpdates];
 }
 
 - (void)queryController:(LYRQueryController *)controller
@@ -424,33 +424,44 @@ NSString *const ATLConversationListViewControllerDeletionModeEveryone = @"Everyo
           forChangeType:(LYRQueryControllerChangeType)type
            newIndexPath:(NSIndexPath *)newIndexPath
 {
-    switch (type) {
-        case LYRQueryControllerChangeTypeInsert:
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case LYRQueryControllerChangeTypeUpdate:
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath]
-                                  withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case LYRQueryControllerChangeTypeMove:
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath]
-                                  withRowAnimation:UITableViewRowAnimationAutomatic];
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case LYRQueryControllerChangeTypeDelete:
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath]
-                                  withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        default:
-            break;
-    }
+//    @try {
+//        switch (type) {
+//            case LYRQueryControllerChangeTypeInsert:
+//                [self.tableView insertRowsAtIndexPaths:@[newIndexPath]
+//                                      withRowAnimation:UITableViewRowAnimationAutomatic];
+//                break;
+//            case LYRQueryControllerChangeTypeUpdate:
+//                [self.tableView reloadRowsAtIndexPaths:@[indexPath]
+//                                      withRowAnimation:UITableViewRowAnimationAutomatic];
+//                break;
+//            case LYRQueryControllerChangeTypeMove:
+//                [self.tableView deleteRowsAtIndexPaths:@[indexPath]
+//                                      withRowAnimation:UITableViewRowAnimationAutomatic];
+//                [self.tableView insertRowsAtIndexPaths:@[newIndexPath]
+//                                      withRowAnimation:UITableViewRowAnimationAutomatic];
+//                break;
+//            case LYRQueryControllerChangeTypeDelete:
+//                [self.tableView deleteRowsAtIndexPaths:@[indexPath]
+//                                      withRowAnimation:UITableViewRowAnimationAutomatic];
+//                break;
+//            default:
+//                break;
+//        }
+//
+//    }
+//    @catch (NSException *exception) {
+        [self.tableView reloadData];
+//    }
 }
 
 - (void)queryControllerDidChangeContent:(LYRQueryController *)queryController
 {
-    [self.tableView endUpdates];
+//    @try {
+//        [self.tableView endUpdates];
+//    }
+//    @catch (NSException *exception) {
+//        [self.tableView reloadData];
+//    }
     if (self.conversationSelectedBeforeContentChange) {
         NSIndexPath *indexPath = [self.queryController indexPathForObject:self.conversationSelectedBeforeContentChange];
         if (indexPath) {

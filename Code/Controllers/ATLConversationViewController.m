@@ -33,6 +33,7 @@
 #import "BSTPhotosSelectionViewController.h"
 
 @import AVFoundation;
+@import Photos;
 
 @interface ATLConversationViewController () <CLLocationManagerDelegate, BSTPhotosSelectionViewControllerDelegate>
 
@@ -122,7 +123,9 @@ static NSInteger const childViewHeight = 130;
     _sectionFooters = [NSHashTable weakObjectsHashTable];
     _objectChanges = [NSMutableArray new];
     _animationQueue = dispatch_queue_create("com.atlas.animationQueue", DISPATCH_QUEUE_SERIAL);
-    
+}
+
+- (void)addPhotosViewController {
     UICollectionViewFlowLayout *flowLayout = [UICollectionViewFlowLayout new];
     flowLayout.minimumLineSpacing = 10;
     flowLayout.itemSize = CGSizeMake(115, 115);
@@ -131,16 +134,6 @@ static NSInteger const childViewHeight = 130;
     
     self.childViewController = [[BSTPhotosSelectionViewController alloc] initWithCollectionViewLayout:flowLayout];
     self.childViewController.delegate = self;
-}
-
-- (void)loadView
-{
-    [super loadView];
-    // Collection View Setup
-    self.collectionView = [[ATLConversationCollectionView alloc] initWithFrame:CGRectZero
-                                                          collectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
-    self.collectionView.delegate = self;
-    self.collectionView.dataSource = self;
     
     [self addChildViewController:self.childViewController];
     [self.childViewController didMoveToParentViewController:self];
@@ -152,6 +145,16 @@ static NSInteger const childViewHeight = 130;
                                                      screenSize.height,
                                                      screenSize.width,
                                                      childViewHeight);
+}
+
+- (void)loadView
+{
+    [super loadView];
+    // Collection View Setup
+    self.collectionView = [[ATLConversationCollectionView alloc] initWithFrame:CGRectZero
+                                                          collectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
+    self.collectionView.delegate = self;
+    self.collectionView.dataSource = self;
 }
 
 - (void)setLayerClient:(LYRClient *)layerClient
@@ -588,10 +591,25 @@ static NSInteger const childViewHeight = 130;
 #pragma mark - ATLMessageInputToolbarDelegate
 
 - (void)messageInputToolbar:(ATLMessageInputToolbar *)messageInputToolbar didTapGalleryAccessoryButton:(UIButton *)leftAccessoryButton {
-    if (leftAccessoryButton.selected) {
-        [self showGalleryView];
+    if ([PHPhotoLibrary authorizationStatus] != PHAuthorizationStatusAuthorized) {
+        __weak typeof(self) weakSelf = self;
+        
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (status == PHAuthorizationStatusAuthorized) {
+                [weakSelf addPhotosViewController];
+                [weakSelf showGalleryView];
+            } else {
+                leftAccessoryButton.enabled = NO;
+            }
+        }];
     } else {
-        [self hideGalleryView];
+        if (leftAccessoryButton.selected) {
+            [self showGalleryView];
+        } else {
+            [self hideGalleryView];
+        }
+        
+        leftAccessoryButton.selected = !leftAccessoryButton.selected;
     }
 }
 
@@ -1345,30 +1363,30 @@ static NSInteger const childViewHeight = 130;
         @try {
             [self.collectionView performBatchUpdates:^{
                 for (ATLDataSourceChange *change in objectChanges) {
-                    switch (change.type) {
-                        case LYRQueryControllerChangeTypeInsert:
-                            if (change.newIndex > 1) {
-                                [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:change.newIndex - 1]];
-                            }
-                            [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:change.newIndex]];
-                            break;
-                            
-                        case LYRQueryControllerChangeTypeMove:
-                            [self.collectionView moveSection:change.currentIndex toSection:change.newIndex];
-                            break;
-                            
-                        case LYRQueryControllerChangeTypeDelete:
-                            [self.collectionView deleteSections:[NSIndexSet indexSetWithIndex:change.currentIndex]];
-                            break;
-                            
-                        case LYRQueryControllerChangeTypeUpdate:
-                            // If we call reloadSections: for a section that is already being animated due to another move (e.g. moving section 17 to 16 causes section 16 to be moved/animated to 17 and then we also reload section 16), UICollectionView will throw an exception. But since all onscreen sections will be reconfigured (see below) we don't need to reload the sections here anyway.
-                            break;
-                            
-                        default:
-                            break;
+                        switch (change.type) {
+                            case LYRQueryControllerChangeTypeInsert:
+                                if (change.newIndex > 1) {
+                                    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:change.newIndex - 1]];
+                                }
+                                [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:change.newIndex]];
+                                break;
+                                
+                            case LYRQueryControllerChangeTypeMove:
+                                [self.collectionView moveSection:change.currentIndex toSection:change.newIndex];
+                                break;
+                                
+                            case LYRQueryControllerChangeTypeDelete:
+                                [self.collectionView deleteSections:[NSIndexSet indexSetWithIndex:change.currentIndex]];
+                                break;
+                                
+                            case LYRQueryControllerChangeTypeUpdate:
+                                // If we call reloadSections: for a section that is already being animated due to another move (e.g. moving section 17 to 16 causes section 16 to be moved/animated to 17 and then we also reload section 16), UICollectionView will throw an exception. But since all onscreen sections will be reconfigured (see below) we don't need to reload the sections here anyway.
+                                break;
+                                
+                            default:
+                                break;
+                        }
                     }
-                }
             } completion:^(BOOL finished) {
                 dispatch_resume(self.animationQueue);
             }];

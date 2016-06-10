@@ -59,7 +59,8 @@
     // UIAppearance Defaults
     _boldTitleFont = [UIFont boldSystemFontOfSize:17];
     _titleFont = [UIFont systemFontOfSize:17];
-    _titleColor =[UIColor blackColor];
+    _titleColor = [UIColor blackColor];
+    _shouldBoldTitle = YES;
     
     self.nameLabel = [UILabel new];
     self.nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -99,7 +100,7 @@
 
 - (void)presentParticipant:(id<ATLParticipant>)participant withSortType:(ATLParticipantPickerSortType)sortType shouldShowAvatarItem:(BOOL)shouldShowAvatarItem
 {
-    self.accessibilityLabel = [participant fullName];
+    self.accessibilityLabel = [participant displayName];
     self.participant = participant;
     self.sortType = sortType;
     if (shouldShowAvatarItem) {
@@ -113,7 +114,7 @@
     }
     self.avatarImageView.avatarItem = self.participant;
     [self configureNameLabel];
-    self.accessibilityLabel = participant.fullName;
+    self.accessibilityLabel = participant.displayName;
 }
 
 - (void)setTitleFont:(UIFont *)titleFont
@@ -136,23 +137,23 @@
 
 - (void)configureNameLabel
 {
-    NSString *participantName = self.participant.fullName.length ? self.participant.fullName : @"Unknown Participant";
+    NSString *participantName = self.participant.displayName.length ? self.participant.displayName : @"Unknown Participant";
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:participantName attributes:@{NSFontAttributeName: self.titleFont}];
 
     NSRange rangeToBold = NSMakeRange(NSNotFound, 0);
     switch (self.sortType) {
         case ATLParticipantPickerSortTypeFirstName:
             if (self.participant.firstName.length != 0) {
-                rangeToBold = [self.participant.fullName rangeOfString:self.participant.firstName];
+                rangeToBold = [self.participant.displayName rangeOfString:self.participant.firstName];
             }
             break;
         case ATLParticipantPickerSortTypeLastName:
             if (self.participant.lastName.length != 0) {
-                rangeToBold = [self.participant.fullName rangeOfString:self.participant.lastName options:NSBackwardsSearch];
+                rangeToBold = [self.participant.displayName rangeOfString:self.participant.lastName options:NSBackwardsSearch];
             }
             break;
     }
-    if (rangeToBold.location != NSNotFound) {
+    if (rangeToBold.location != NSNotFound && self.shouldBoldTitle) {
         [attributedString addAttributes:@{NSFontAttributeName: self.boldTitleFont} range:rangeToBold];
     }
 

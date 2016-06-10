@@ -23,6 +23,7 @@
 
 extern NSInteger const ATLNumberOfSectionsBeforeFirstMessageSection;
 
+NS_ASSUME_NONNULL_BEGIN
 /**
  @abstract The `ATLConversationDataSource` manages an `LYRQueryController` object whose data is displayed in an
  `ATLConversationViewController`. The `ATLConversationDataSource` also provides convenience methods for the translation 
@@ -68,11 +69,6 @@ extern NSInteger const ATLNumberOfSectionsBeforeFirstMessageSection;
  */
 - (void)expandPaginationWindow;
 
-/**
- @abstract Returns `YES` if the data source is currently in the process of expanding its pagination window.
- */
-@property (nonatomic, readonly, getter=isExpandingPaginationWindow) BOOL expandingPaginationWindow;
-
 ///---------------------------------------
 /// @name Index Translation Methods
 ///---------------------------------------
@@ -96,11 +92,12 @@ extern NSInteger const ATLNumberOfSectionsBeforeFirstMessageSection;
 /**
  @abstract Fetches the `LYRMessage` object corresponding to an `ATLConversationViewController` index path.
  */
-- (LYRMessage *)messageAtCollectionViewIndexPath:(NSIndexPath *)collectionViewIndexPath;
+- (nullable LYRMessage *)messageAtCollectionViewIndexPath:(NSIndexPath *)collectionViewIndexPath;
 
 /**
  @abstract Fetches the `LYRMessage` object corresponding to an `ATLConversationViewController` section.
  */
-- (LYRMessage *)messageAtCollectionViewSection:(NSInteger)collectionViewSection;
+- (nullable LYRMessage *)messageAtCollectionViewSection:(NSInteger)collectionViewSection;
 
 @end
+NS_ASSUME_NONNULL_END

@@ -5,7 +5,6 @@ use_frameworks!
 
 target 'Programmatic' do
   pod 'Atlas', path: '.'
-  pod 'MBCircularProgressBar', path '.'
 end
 
 target 'Storyboard' do

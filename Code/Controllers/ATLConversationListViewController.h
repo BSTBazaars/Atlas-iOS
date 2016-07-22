@@ -22,6 +22,7 @@
 @import LayerKit;
 #import "ATLConversationTableViewCell.h"
 #import "ATLAvatarItem.h"
+#import "ATLParticipant.h"
 
 @class ATLConversationListViewController;
 
@@ -29,6 +30,7 @@
 /// @name Delegate
 ///---------------------------------------
 
+NS_ASSUME_NONNULL_BEGIN
 @protocol ATLConversationListViewControllerDelegate <NSObject>
 
 /**
@@ -63,7 +65,7 @@
  @param searchText The search text that was used for search.
  @param completion The block has has no return value and accepts a single argument: an NSSet of objects conforming to the ATLParticipant protocol that were found to match the search text.
  */
-- (void)conversationListViewController:(ATLConversationListViewController *)conversationListViewController didSearchForText:(NSString *)searchText completion:(void (^)(NSSet *filteredParticipants))completion;
+- (void)conversationListViewController:(ATLConversationListViewController *)conversationListViewController didSearchForText:(NSString *)searchText completion:(void (^)(NSSet <id<ATLParticipant>>*filteredParticipants))completion;
 
 @end
 
@@ -117,6 +119,15 @@
  @return The color to apply on the delete button for a given deletion mode in the conversation list.
  */
 - (UIColor *)conversationListViewController:(ATLConversationListViewController *)conversationListViewController colorForButtonWithDeletionMode:(LYRDeletionMode)deletionMode;
+
+/**
+ @abstract Asks the data source for an `NSArray` of `UITableViewRowAction` objects for the given deletion modes.
+ @param conversationListViewController The `LYRConversationListViewController` in which the edit actions title will appear.
+ @param deletionModes An `NSArray` of deletion modes that are supported by the controller.
+ @return An `NSArray` of `UITableViewRowAction` objects to be implemented by the controller.
+ @note If this data source method is implemented, other data source methods conversationListViewController:textForButtonWithDeletionMode: and conversationListViewController:colorForButtonWithDeletionMode: will not be called.
+ */
+- (NSArray *)conversationListViewController:(ATLConversationListViewController *)conversationListViewController rowActionsForDeletionModes:(NSArray < UITableViewRowAction*> *)deletionModes;
 
 /**
  @abstract Asks the data source for the string to display as the conversation's last sent message.
@@ -183,7 +194,7 @@
 /**
  @abstract The `LYRQueryController` object managing data displayed in the controller.
  */
-@property (nonatomic, readonly) LYRQueryController *queryController;
+@property (nonatomic, readonly) LYRQueryController * _Nullable queryController;
 
 /**
  @abstract The object that is informed when specific events occur
@@ -215,7 +226,7 @@
  @default `LYRDeletionModeLocal` and `LYRDeletionModeAllParticipants.
  @raises NSInternalInconsistencyException Raised if the value is mutated after the receiver has been presented.
  */
-@property (nonatomic) NSArray *deletionModes;
+@property (nonatomic) NSArray <NSNumber*> *deletionModes;
 
 /**
  @abstract Informs the receiver if it should display an avatar item representing a conversation.
@@ -273,3 +284,4 @@
 - (void)reloadCellForConversation:(LYRConversation *)conversation;
 
 @end
+NS_ASSUME_NONNULL_END

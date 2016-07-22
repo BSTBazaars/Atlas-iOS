@@ -292,7 +292,6 @@ static CGFloat const ATLButtonHeight = 28.0f;
 
 - (void)leftAccessoryButtonTapped
 {
-    self.leftAccessoryButton.selected = YES;
     [self.inputToolBarDelegate messageInputToolbar:self didTapLeftAccessoryButton:self.leftAccessoryButton];
 }
 
